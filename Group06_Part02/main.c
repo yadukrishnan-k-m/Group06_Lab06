@@ -60,6 +60,30 @@ void PWMConfiguration(void)
     PWM1_ENABLE_R |= 0x040;                 // Enable PWM1 channel 6 Output
 }
 
+void GPIOFHandler(void)
+{
+    if(GPIO_PORTF_MIS_R == 0x10){           // Interrupt from SW1
+        button_read ();
+        //GPIO_PORTF_DATA_R ^= 0x08;          // Toggle data in PF1 (green led)
+    }
+
+    /*if(GPIO_PORTF_MIS_R == 0x01){           // Interrupt from SW2
+        //GPIO_PORTF_DATA_R ^= 0x02;          // Toggle data in PF1 (red led)
+        if(duty != 0) duty = duty-5;        // Decreasing duty cycle by 5 %
+        if(duty < 0) duty = 0;
+        PWM1_3_CMPA_R = (time_period * duty) / 100;
+    }*/
+
+    GPIO_PORTF_ICR_R = 0x11;                // Interrupt clear, 1-clear all prior interrupts (PF7-PF0 = 00010001)
+}
+
+void delay_ms(int milliseconds) {
+    // Loop for the specified number of milliseconds
+    for (i = 0; i < milliseconds; i++) {
+        for (j = 0; j < 16000; j++);         // delay - loop count is based on 16 MHz clock
+    }
+}
+
 void button_read (){
     if((GPIO_PORTF_DATA_R & SWITCH1) == 0){
         delay_ms(1);
