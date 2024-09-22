@@ -1,3 +1,25 @@
+// A 100kHz PWM varying duty cycle waveform on Pin PF2(blue led); controlled by Module 1 PWM Generator 3 A
+// SW1 is used to reduce the brightness by the step of 5 %
+// SW2 is used to increase the brightness by the step of 5 %
+
+
+#include <stdint.h>
+#include <stdbool.h>
+#include "tm4c123gh6pm.h"
+
+//Interrupt Handlers
+void GPIOFHandler(void);
+void SysTickHandler(void){}
+
+void Sys_Port_Initialisation(void);
+void GPIOinterrupt_Initialisation(void);
+void PWMConfiguration(void);
+
+#define frequency 100000                   // 100 kHz frequency
+#define time_period (16000000/frequency)   // 16MHz clock frequency
+
+volatile int duty = 50;                    // Duty cycle in percentage
+
 void Sys_Port_Initialisation(void){
 
     // PORTF, PF7-PF0, PF4-SW1, PF3-green, PF2-blue, PF1-red, PF0-SW2
