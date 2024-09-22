@@ -45,6 +45,21 @@ void GPIOFHandler(void)
     GPIO_PORTF_ICR_R = 0x11;                // Interrupt clear, 1-clear all prior interrupts (PF7-PF0 = 00010001)
 }
 
+void PWMConfiguration(void)
+{
+    SYSCTL_RCGCPWM_R |= (1<<1);             // Enable PWM1 clock
+    GPIO_PORTF_AFSEL_R |= (1<<2);           // Enable GPIO alternate function
+    GPIO_PORTF_PCTL_R |= 0x500;             // Make PF2 as PWM output
+
+    // Configure the PWM generator
+    PWM1_3_CTL_R |= 0x00;                   // Disable PWM3 while configuring and select down count mode
+    PWM1_3_GENA_R = 0x8C;                   // Set PWM3A to produce a symmetric down-counting PWM signal
+    PWM1_3_LOAD_R = time_period;
+    PWM1_3_CMPA_R = (duty/100)*time_period - 1;
+    PWM1_3_CTL_R |= 0x01;                   // Enable generator 3 counter
+    PWM1_ENABLE_R |= 0x040;                 // Enable PWM1 channel 6 Output
+}
+
 void button_read (){
     if((GPIO_PORTF_DATA_R & SWITCH1) == 0){
         delay_ms(1);
