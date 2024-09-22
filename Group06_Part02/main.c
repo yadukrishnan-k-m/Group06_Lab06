@@ -1,4 +1,32 @@
+// It includes both the functionalities in the question (b). The SW1 will function as short press and long press
+// A 100kHz PWM varying duty cycle waveform on Pin PF2(blue led); controlled by Module 1 PWM Generator 3 A
+// SW1 is used to reduce the brightness by the step of 5 % in long press. Increase 5% in short press
 
+
+
+#include <stdint.h>
+#include <stdbool.h>
+#include "tm4c123gh6pm.h"
+
+#define SWITCH1    (1U << 4) // PF4
+
+int i = 0;
+int j = 0;
+
+//Interrupt Handlers
+void GPIOFHandler(void);
+void SysTickHandler(void){}
+
+void Sys_Port_Initialisation(void);
+void GPIOinterrupt_Initialisation(void);
+void PWMConfiguration(void);
+void delay_ms(int milliseconds);
+void button_read (void);
+
+#define frequency 100000                   // 100 kHz frequency
+#define time_period (16000000/frequency)   // 16MHz clock frequency
+
+volatile int duty = 50;                    // Duty cycle in percentage
 
 void GPIOFHandler(void)
 {
